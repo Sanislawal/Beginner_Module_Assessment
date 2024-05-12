@@ -1,0 +1,20 @@
+---
+- name: Deploy LAMP Stack and Setup Cron Job
+  hosts: slave
+  become: true
+  tasks:
+    - name: Transfer deploy.sh script to remote host
+      copy:
+        src: deploy.sh
+        dest: /tmp/deploy.sh
+        mode: 0755
+      
+    - name: Execute deploy.sh script
+      shell: /tmp/deploy.sh
+      
+    - name: Setup cron job to check server uptime
+      cron:
+        name: Check Server Uptime
+        minute: 0
+        hour: 0
+        job: /usr/bin/uptime > /var/log/uptime.log
